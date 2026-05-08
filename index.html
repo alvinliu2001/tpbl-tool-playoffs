@@ -106,17 +106,16 @@
             { id: "AG5*", date: "2026-05-19", time: "19:00", home: "雲豹", away: "國王", broadcast: "緯來電視網" }
         ];
 
-        const STORAGE_PREFIX = 'tpbl_playoff_v4_';
+        const STORAGE_PREFIX = 'tpbl_playoff_v5_';
         let currentMode = '';
 
-        // --- 字體轉換修正 (徹底修復 I, M, k) ---
         const toMathBoldSerif = (text) => {
-            const fullMap = {
-                'A':'𝐀','B':'𝐁','C':'𝐂','D':'𝐃','E':'𝐄','F':'𝐅','G':'𝐆','H':'𝐇','I':'𝐈','J':'𝐉','K':'𝐊','L':'𝐋','M':'𝐌','N':'𝐍','O':'𝐎','P':'𝐏','Q':'𝐐','R':'𝐑','S':'𝐒','T':'𝐓','U':'𝐔','V':'𝐕','W':'𝐖','X':'𝐗','Y':'𝐘','Z':'𝐙',
-                'a':'𝐚','b':'𝐛','c':'𝐜','d':'𝐝','e':'𝐞','f':'ｆ','g':'𝐠','h':'𝐡','i':'𝐢','j':'𝐣','k':'𝐤','l':'ｌ','m':'𝐦','n':'ｎ','o':'𝐨','p':'𝐩','q':'𝐪','r':'ｒ','s':'ｓ','t':'ｔ','u':'ｕ','v':'ｖ','w':'ｗ','x':'ｘ','y':'ｙ','z':'𝐳',
+            const fixMap = {
+                'A':'𝐀','B':'Ｂ','C':'𝐂','D':'𝐃','E':'𝐄','F':'𝐅','G':'𝐆','H':'Ｈ','I':'𝐈','J':'𝐉','K':'𝐊','L':'𝐋','M':'𝐌','N':'𝐍','O':'𝐎','P':'𝐏','Q':'𝐐','R':'𝐑','S':'𝐒','T':'𝐓','U':'𝐔','V':'Ｖ','W':'𝐖','X':'𝐗','Y':'𝐘','Z':'𝐙',
+                'a':'𝐚','b':'𝐛','c':'ｃ','d':'𝐝','e':'𝐞','f':'ｆ','g':'ｇ','h':'ｈ','i':'ｉ','j':'ｊ','k':'𝐤','l':'ｌ','m':'ｍ','n':'ｎ','o':'ｏ','p':'ｐ','q':'𝐪','r':'ｒ','s':'ｓ','t':'ｔ','u':'ｕ','v':'ｖ','w':'ｗ','x':'ｘ','y':'ｙ','z':'𝐳',
                 '0':'𝟎','1':'𝟏','2':'𝟐','3':'𝟑','4':'𝟒','5':'𝟓','6':'𝟔','7':'𝟕','8':'𝟖','9':'𝟗'
             };
-            return String(text).split('').map(char => fullMap[char] || char).join('');
+            return String(text).split('').map(char => fixMap[char] || char).join('');
         };
         const toMathBoldSans = (text) => {
             const sansMap = { 'N':'𝗡','E':'𝗘','X':'𝗫','T':'𝗧','G':'𝗚','A':'𝗔','M':'𝗠' };
@@ -150,23 +149,24 @@
 
         function renderForm(mode) {
             const container = document.getElementById('dynamic-form');
-            let html = `<div><label class="block text-sm font-medium text-gray-700 mb-1">選擇季後賽場次</label><select id="game_select" class="w-full p-2.5 border border-gray-300 rounded-md bg-white"><option value="" disabled selected>請選擇場次</option>${PLAYOFF_SCHEDULE.map(g => `<option value="${g.id}">${g.id.replace('*','')}｜${g.date} ${g.away} vs ${g.home}</option>`).join('')}</select></div>`;
+            let html = '';
+            
+            const gameSelect = `<div><label class="block text-sm font-medium text-gray-700 mb-1">選擇季後賽場次</label><select id="game_select" class="w-full p-2.5 border border-gray-300 rounded-md bg-white"><option value="" disabled selected>請選擇場次</option>${PLAYOFF_SCHEDULE.map(g => `<option value="${g.id}">${g.id.replace('*','')}｜${g.date} ${g.away} vs ${g.home}</option>`).join('')}</select></div>`;
+            const broadcastSelect = (id, label) => `<div><label class="block text-sm font-medium text-gray-700 mb-1">${label}</label><select id="${id}" class="w-full p-2.5 border border-gray-300 rounded-md bg-white"><option value="緯來電視網">緯來電視網</option><option value="MOMOTV">MOMOTV</option></select></div>`;
 
             if (mode === 'today_preview') {
-                html += `
+                html = gameSelect + broadcastSelect('m_broadcast', '電視轉播') + `
                     ${createInput('m_yt','YT 轉播連結')}
                     ${createTextarea('m_intro','引言文案','季後賽正式點燃戰火！\n面對季後賽關鍵首戰，雙方目標直指勝利，力拚搶下季後賽首勝優勢。\n今晚 17:00，關鍵對決一觸即發，精彩可期！')}
                 `;
             } else if (mode === 'final_score') {
-                html += createInput('m_title','標題','text','全隊「豹」勝！雲豹搶下系列賽首勝') + createTextarea('m_content','比賽內容描述');
+                html = gameSelect + createInput('m_title','標題','text','全隊「豹」勝！雲豹搶下系列賽首勝') + createTextarea('m_content','比賽內容描述');
             } else if (mode === 'game_highlight') {
-                container.innerHTML = createInput('hl_title','精華標題') + `
-                    <div class="mt-4"><label class="block text-sm font-medium text-gray-700 mb-1">電視轉播</label><input type="text" id="hl_broadcast" class="w-full p-2.5 border border-gray-300 rounded-md" value="緯來電視網｜博斯運動二台"></div>
+                html = createInput('hl_title','精華標題') + broadcastSelect('hl_broadcast', '電視轉播') + `
                     <div class="mt-4"><label class="block text-sm font-medium text-gray-700 mb-1">廣告區塊</label><textarea id="hl_ad" rows="3" class="w-full p-2.5 border border-gray-300 rounded-md">《超時空街球對決》手遊雙平台預約👉 https://app.adjust.com/1ys512ez</textarea></div>
                 `;
-                return;
             } else if (mode === 'potg') {
-                html += `<div class="mt-4"><label class="block text-sm font-medium text-gray-700 mb-1">贊助商活動文案</label><input type="text" id="potg_promo" class="w-full p-2.5 border border-gray-300 rounded-md" value="🀄️ 拚競技，超帶勁，加入競技麻將2 👉🏻 抽 TPBL 賽事門票"></div>`;
+                html = gameSelect + `<div class="mt-4"><label class="block text-sm font-medium text-gray-700 mb-1">贊助商活動文案</label><input type="text" id="potg_promo" class="w-full p-2.5 border border-gray-300 rounded-md" value="🀄️ 拚競技，超帶勁，加入競技麻將2 👉🏻 抽 TPBL 賽事門票"></div>`;
             }
             container.innerHTML = html;
         }
@@ -180,6 +180,17 @@
                 form.addEventListener('input', () => { generateCopy(); saveToLocal(); });
                 form.addEventListener('change', () => { generateCopy(); saveToLocal(); });
             }
+            // 當場次切換時，自動根據資料庫切換轉播平台選單
+            const gs = document.getElementById('game_select');
+            if (gs) {
+                gs.addEventListener('change', (e) => {
+                    const game = PLAYOFF_SCHEDULE.find(g => g.id === e.target.value);
+                    if (game && document.getElementById('m_broadcast')) {
+                        document.getElementById('m_broadcast').value = game.broadcast;
+                    }
+                    generateCopy();
+                });
+            }
         }
 
         function generateCopy() {
@@ -187,22 +198,21 @@
             const common_tags = "#TPBL #NOTHINGBUTCHAMPIONS #TPBL季後賽";
             const gid = v('game_select');
             const game = PLAYOFF_SCHEDULE.find(g => g.id === gid);
+            const fixed_broadcast = "｜博斯運動二台｜TPBL 官方 YouTube";
             
             if (currentMode === 'today_preview' && game) {
                 const h = getTeam(game.home); const a = getTeam(game.away);
                 const dateHeader = `${formatPlayoffDate(game.date)}（${getDayEngBold(game.date)}）`;
-                // 格式修正為 PLAYOFFS
                 const playoffTitle = toMathBoldSerif(`PLAYOFFS ${game.id.replace('*','')}`);
                 
                 out = `🏀 ${toMathBoldSerif('GAMEDAY')} & ${toMathBoldSerif('ROSTER')}｜${dateHeader}\n\n`;
                 out += `${playoffTitle} ✦ ${toMathBoldSerif(game.time)} ${a.emoji} ${game.away} vs ${game.home} ${h.emoji} ✦\n\n`;
                 out += `${v('m_intro')}\n\n-\n\n`;
                 out += `👉🏻 賽事地點 📍 ${h.arena}\n`;
-                out += `👉🏻 轉播平台 📺 ${game.broadcast}｜博斯運動二台｜TPBL 官方 YouTube\n`;
+                out += `👉🏻 轉播平台 📺 ${v('m_broadcast')}${fixed_broadcast}\n`;
                 out += `👉🏻 YT轉播連結｜${v('m_yt')}\n\n${common_tags} #moltentaiwan`;
 
             } else if (currentMode === 'final_score' && game) {
-                // 標題修正為 PLAYOFFS [ID] FINAL
                 const gameIdBold = toMathBoldSerif(`PLAYOFFS ${game.id.replace('*','')} FINAL`);
                 const gameIdx = PLAYOFF_SCHEDULE.indexOf(game);
                 const next = PLAYOFF_SCHEDULE[gameIdx + 1];
@@ -215,7 +225,7 @@
                 out += common_tags;
 
             } else if (currentMode === 'game_highlight') {
-                out = `❤️‍🔥👉🏻｜${v('hl_title')}\n\n📺 ${v('hl_broadcast')}｜TPBL 官方 YOUTUBE\n\n-\n\n${v('hl_ad')}\n\n${common_tags}`;
+                out = `❤️‍🔥👉🏻｜${v('hl_title')}\n\n📺 ${v('hl_broadcast')}｜博斯運動二台｜TPBL 官方 YOUTUBE\n\n-\n\n${v('hl_ad')}\n\n${common_tags}`;
 
             } else if (currentMode === 'potg' && game) {
                 const h = getTeam(game.home); const a = getTeam(game.away);
