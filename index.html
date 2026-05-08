@@ -29,15 +29,12 @@
 </head>
 <body class="bg-gray-50 text-gray-800 h-screen overflow-hidden">
 
-    <!-- LANDING PAGE -->
     <div id="landing-page" class="fixed inset-0 z-50 bg-brand-dark flex flex-col md:flex-row overflow-hidden">
         <div class="w-full md:w-1/2 h-full flex flex-col justify-center px-8 md:px-24 relative z-10 bg-brand-dark overflow-y-auto">
             <div class="flex-1 flex flex-col justify-center min-h-[400px]">
-                <div class="mb-6 flex justify-start">
-                    <img src="https://raw.githubusercontent.com/alvinliu2001/tpbl-tool/refs/heads/main/tpbl-logo-white.png" alt="TPBL Logo" class="h-10 md:h-12 w-auto">
-                </div>
+                <div class="mb-6 flex justify-start"><img src="https://raw.githubusercontent.com/alvinliu2001/tpbl-tool/refs/heads/main/tpbl-logo-white.png" alt="TPBL Logo" class="h-10 md:h-12 w-auto"></div>
                 <h1 class="text-3xl md:text-4xl font-semibold text-white mb-3 tracking-wide text-left">社群文案生成工具</h1>
-                <p class="text-gray-400 text-lg md:text-xl mb-10 font-extralight text-left">𝐏𝐋𝐀𝐘𝐎𝐅𝐅𝐒 𝐒𝐏𝐄𝐂𝐈𝐀𝐋 𝐄𝐃𝐈𝐓𝐈𝐎𝐍</p>
+                <p class="text-gray-400 text-lg md:text-xl mb-10 font-extralight text-left">希望每次值班都能早點下班</p>
                 <div class="flex justify-start">
                     <button onclick="enterApp()" class="bg-brand-gold text-brand-dark text-lg font-bold py-3 px-12 rounded-full hover:bg-white hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-2">開始使用 <span>→</span></button>
                 </div>
@@ -52,23 +49,17 @@
         </div>
     </div>
 
-    <!-- MAIN APP -->
     <div id="app-container" class="hidden w-full h-full flex flex-col md:flex-row overflow-hidden fixed inset-0 z-0">
         <aside class="w-full md:w-64 bg-brand-dark text-gray-400 flex flex-col flex-shrink-0 md:h-full z-50 shadow-lg md:shadow-none">
             <div class="p-4 md:p-6 border-b border-gray-800 flex justify-between items-center bg-brand-dark z-50">
                 <img src="https://raw.githubusercontent.com/alvinliu2001/tpbl-tool/refs/heads/main/tpbl-logo-white.png" alt="TPBL Logo" class="h-6 md:h-7 w-auto cursor-pointer" onclick="location.reload()">
             </div>
-            
             <nav id="sidebar-nav" class="flex flex-col py-4 space-y-1 bg-brand-dark flex-1">
                 <div class="px-4 py-2 text-xs font-bold text-gray-600 uppercase tracking-wider">季後賽模式</div>
                 <button onclick="switchMode('today_preview')" id="btn-today_preview" class="sidebar-item w-full text-left px-6 py-3 hover:bg-gray-800 transition flex items-center gap-3"><i class="fa-solid fa-calendar-day w-6 text-center"></i> 今日賽事預告</button>
                 <button onclick="switchMode('final_score')" id="btn-final_score" class="sidebar-item w-full text-left px-6 py-3 hover:bg-gray-800 transition flex items-center gap-3"><i class="fa-solid fa-flag-checkered w-6 text-center"></i> 終場比分</button>
                 <button onclick="switchMode('game_highlight')" id="btn-game_highlight" class="sidebar-item w-full text-left px-6 py-3 hover:bg-gray-800 transition flex items-center gap-3"><i class="fa-solid fa-film w-6 text-center"></i> 本場賽事精華</button>
                 <button onclick="switchMode('potg')" id="btn-potg" class="sidebar-item w-full text-left px-6 py-3 hover:bg-gray-800 transition flex items-center gap-3"><i class="fa-solid fa-bolt w-6 text-center"></i> 單場最佳球員</button>
-                
-                <div class="mt-auto p-4 border-t border-gray-800 text-xs text-gray-600">
-                    季後賽資料庫已就緒
-                </div>
             </nav>
         </aside>
 
@@ -83,7 +74,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="w-full md:w-1/3 bg-gray-100 p-6 flex flex-col border-t md:border-l border-gray-200">
                 <h3 class="text-lg font-bold mb-4 text-gray-700">預覽結果</h3>
                 <textarea id="output-text" class="flex-1 w-full p-4 border border-gray-300 rounded-lg text-sm resize-none focus:ring-2 focus:ring-brand-gold bg-white leading-relaxed h-80 md:h-auto" placeholder="文案將顯示於此..."></textarea>
@@ -93,7 +83,6 @@
     </div>
     
     <script>
-        // --- Data ---
         const TEAMS = {
             "戰神": { full: "臺北台新戰神", emoji: "🛡️", arena: "和平籃球館" },
             "攻城獅": { full: "新竹御嵿攻城獅", emoji: "🦁", arena: "新竹縣體育館" },
@@ -117,27 +106,38 @@
             { id: "AG5*", date: "2026-05-19", time: "19:00", home: "雲豹", away: "國王", broadcast: "緯來電視網" }
         ];
 
-        const STORAGE_PREFIX = 'tpbl_playoff_v1_';
+        const STORAGE_PREFIX = 'tpbl_playoff_v3_';
         let currentMode = '';
 
-        // --- Utils ---
         const toMathBoldSerif = (text) => {
-            const map = { '0':'𝟎','1':'𝟏','2':'𝟐','3':'𝟑','4':'𝟒','5':'𝟓','6':'𝟔','7':'𝟕','8':'𝟖','9':'𝟗','A':'𝐀','B':'𝐁','C':'𝐂','D':'𝐃','E':'𝐄','F':'𝐅','G':'𝐆','H':'𝐇','I':'𝐈','J':'𝐉','K':'𝐊','L':'𝐋','M':'𝐌','N':'𝐍','O':'𝐎','P':'𝐏','Q':'𝐐','R':'𝐑','S':'𝐒','T':'𝐓','U':'Ｕ','V':'𝐕','W':'𝐖','X':'Ｘ','Y':'𝐘','Z':'𝐙','a':'𝐚','b':'𝐛','c':'𝐜','d':'𝐝','e':'𝐞','f':'ｆ','g':'ｇ','h':'ｈ','i':'ｉ','j':'ｊ','k':'𝐤','l':'ｌ','m':'ｍ','n':'ｎ','o':'ｏ','p':'ｐ','q':'𝐪','r':'ｒ','s':'ｓ','t':'ｔ','u':'ｕ','v':'ｖ','w':'ｗ','x':'ｘ','y':'ｙ','z':'𝐳' };
+            const map = { '0':'𝟎','1':'𝟏','2':'𝟐','3':'𝟑','4':'𝟒','5':'𝟓','6':'𝟔','7':'𝟕','8':'𝟖','9':'𝟗','A':'𝐀','B':'𝐁','C':'Ｃ','D':'𝐃','E':'𝐄','F':'𝐅','G':'𝐆','H':'Ｈ','I':'Ｉ','J':'Ｊ','K':'Ｋ','L':'Ｌ','M':'Ｍ','N':'Ｎ','O':'Ｏ','P':'Ｐ','Q':'Ｑ','R':'Ｒ','S':'Ｓ','T':'Ｔ','U':'Ｕ','V':'Ｖ','W':'Ｗ','X':'Ｘ','Y':'Ｙ','Z':'Ｚ','a':'ａ','b':'ｂ','c':'ｃ','d':'ｄ','e':'ｅ','f':'ｆ','g':'ｇ','h':'ｈ','i':'ｉ','j':'ｊ','k':'ｋ','l':'ｌ','m':'ｍ','n':'ｎ','o':'ｏ','p':'ｐ','q':'ｑ','r':'ｒ','s':'ｓ','t':'ｔ','u':'ｕ','v':'ｖ','w':'ｗ','x':'ｘ','y':'ｙ','z':'ｚ','-':'－','+':'＋','✦':'✦' };
+            // 手動修復特定字母轉換為全形問題，改用標準數學粗體 Unicode
+            const fixMap = {
+                'A':'𝐀','B':'𝐁','C':'𝐂','D':'𝐃','E':'𝐄','F':'𝐅','G':'𝐆','H':'𝐇','I':'Ｉ','J':'𝐉','K':'𝐊','L':'𝐋','M':'Ｍ','N':'𝐍','O':'𝐎','P':'𝐏','Q':'𝐐','R':'𝐑','S':'𝐒','T':'𝐓','U':'𝐔','V':'Ｖ','W':'𝐖','X':'𝐗','Y':'𝐘','Z':'𝐙',
+                'a':'𝐚','b':'𝐛','c':'ｃ','d':'𝐝','e':'𝐞','f':'ｆ','g':'ｇ','h':'ｈ','i':'ｉ','j':'ｊ','k':'𝐤','l':'ｌ','m':'ｍ','n':'ｎ','o':'ｏ','p':'ｐ','q':'ｑ','r':'ｒ','s':'ｓ','t':'ｔ','u':'ｕ','v':'ｖ','w':'ｗ','x':'ｘ','y':'ｙ','z':'ｚ'
+            };
+            return String(text).split('').map(char => fixMap[char] || map[char] || char).join('');
+        };
+        const toMathBoldSans = (text) => {
+            const map = { 'N':'𝗡','E':'𝗘','X':'𝗫','T':'𝗧','G':'𝗚','A':'𝗔','M':'𝗠' };
             return String(text).split('').map(char => map[char] || char).join('');
         };
+        
         const parseDateLocal = (s) => { if(!s) return new Date(); const p = s.split('-'); return new Date(p[0], p[1]-1, p[2]); };
-        const getDayChi = (s) => { const d = parseDateLocal(s); return ['日','一','二','三','四','五','六'][d.getDay()]; };
+        const getDayEngBold = (dateStr) => { 
+            const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"]; 
+            return toMathBoldSerif(days[parseDateLocal(dateStr).getDay()]);
+        };
         const formatPlayoffDate = (s) => { 
             const d = parseDateLocal(s); 
             const m = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"][d.getMonth()];
-            return `${m}.${String(d.getDate()).padStart(2,'0')}`;
+            return toMathBoldSerif(`${m}.${String(d.getDate()).padStart(2,'0')}`);
         };
         const getValue = (id) => document.getElementById(id)?.value || "";
         const getTeam = (k) => TEAMS[k] || { full: k, emoji: "", arena: "" };
 
-        // --- Core Logic ---
-        function enterApp() { document.getElementById('landing-page').classList.add('fade-out'); setTimeout(() => { document.getElementById('landing-page').style.display = 'none'; document.getElementById('app-container').classList.remove('hidden').add('fade-in'); }, 500); }
-        function toggleSidebar() { const nav = document.getElementById('sidebar-nav'); nav.classList.toggle('max-h-0'); nav.classList.toggle('opacity-0'); }
+        function enterApp() { document.getElementById('landing-page').classList.add('fade-out'); setTimeout(() => { document.getElementById('landing-page').style.display = 'none'; document.getElementById('app-container').classList.remove('hidden'); }, 500); }
+        function toggleSidebar() { const nav = document.getElementById('sidebar-nav'); nav.classList.toggle('max-h-0'); }
 
         function switchMode(mode) {
             currentMode = mode;
@@ -145,127 +145,95 @@
             document.getElementById(`btn-${mode}`)?.classList.add('active');
             const titles = { 'today_preview':'今日賽事預告', 'final_score':'終場比分', 'game_highlight':'本場賽事精華', 'potg':'單場最佳球員' };
             document.getElementById('title-text').innerText = titles[mode];
-            renderForm(mode); attachFormListeners(); bindSmartEvents(mode); loadFromLocal(); generateCopy();
+            renderForm(mode); bindSmartEvents(mode); loadFromLocal(); generateCopy();
         }
 
         function renderForm(mode) {
             const container = document.getElementById('dynamic-form');
-            let html = '';
-            
-            // 場次選擇下拉選單
-            const gameSelect = `<div><label class="block text-sm font-medium text-gray-700 mb-1">選擇季後賽場次</label><select id="game_select" class="w-full p-2.5 border border-gray-300 rounded-md bg-white"><option value="" disabled selected>請選擇場次</option>${PLAYOFF_SCHEDULE.map(g => `<option value="${g.id}">${g.id}｜${g.date} ${g.away} vs ${g.home}</option>`).join('')}</select></div>`;
+            let html = `<div><label class="block text-sm font-medium text-gray-700 mb-1">選擇季後賽場次</label><select id="game_select" class="w-full p-2.5 border border-gray-300 rounded-md bg-white"><option value="" disabled selected>請選擇場次</option>${PLAYOFF_SCHEDULE.map(g => `<option value="${g.id}">${g.id.replace('*','')}｜${g.date} ${g.away} vs ${g.home}</option>`).join('')}</select></div>`;
 
             if (mode === 'today_preview') {
-                html = gameSelect + `
-                    <div class="grid grid-cols-2 gap-4">
-                        ${createInput('m_date','日期','text','','','readonly')}
-                        ${createInput('m_time','時間','text')}
-                    </div>
+                html += `
                     ${createInput('m_yt','YT 轉播連結')}
-                    ${createTextarea('m_intro','引言文案','季後賽正式點燃戰火！\n面對季後賽關鍵首戰，雙方目標直指勝利...')}
+                    ${createTextarea('m_intro','引言文案','季後賽正式點燃戰火！\n面對季後賽關鍵首戰，雙方目標直指勝利，力拚搶下季後賽首勝優勢。\n今晚 17:00，關鍵對決一觸即發，精彩可期！')}
                 `;
             } else if (mode === 'final_score') {
-                html = gameSelect + createInput('m_title','標題','text','全隊「豹」勝！雲豹搶下系列賽首勝') + createTextarea('m_content','比賽內容描述');
+                html += createInput('m_title','標題','text','全隊「豹」勝！雲豹搶下系列賽首勝') + createTextarea('m_content','比賽內容描述');
             } else if (mode === 'game_highlight') {
                 html = createInput('hl_title','精華標題') + `
-                    <div><label class="block text-sm font-medium text-gray-700 mb-1">電視轉播</label><input type="text" id="hl_broadcast" class="w-full p-2.5 border border-gray-300 rounded-md" value="緯來電視網｜博斯運動二台"></div>
+                    <div class="mt-4"><label class="block text-sm font-medium text-gray-700 mb-1">電視轉播</label><input type="text" id="hl_broadcast" class="w-full p-2.5 border border-gray-300 rounded-md" value="緯來電視網｜博斯運動二台"></div>
                     <div class="mt-4"><label class="block text-sm font-medium text-gray-700 mb-1">廣告區塊</label><textarea id="hl_ad" rows="3" class="w-full p-2.5 border border-gray-300 rounded-md">《超時空街球對決》手遊雙平台預約👉 https://app.adjust.com/1ys512ez</textarea></div>
                 `;
             } else if (mode === 'potg') {
-                html = gameSelect + `<div class="mt-4"><label class="block text-sm font-medium text-gray-700 mb-1">贊助商活動文案</label><input type="text" id="potg_promo" class="w-full p-2.5 border border-gray-300 rounded-md" value="🀄️ 拚競技，超帶勁，加入競技麻將2 👉🏻 抽 TPBL 賽事門票"></div>`;
+                html += `<div class="mt-4"><label class="block text-sm font-medium text-gray-700 mb-1">贊助商活動文案</label><input type="text" id="potg_promo" class="w-full p-2.5 border border-gray-300 rounded-md" value="🀄️ 拚競技，超帶勁，加入競技麻將2 👉🏻 抽 TPBL 賽事門票"></div>`;
             }
             container.innerHTML = html;
         }
 
-        const createInput = (id, l, type="text", ph="", v="", extra="") => `<div><label class="block text-sm font-medium text-gray-700 mb-1">${l}</label><input type="${type}" id="${id}" class="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-gold" placeholder="${ph}" value="${v}" ${extra}></div>`;
+        const createInput = (id, l, type="text", ph="", v="") => `<div><label class="block text-sm font-medium text-gray-700 mb-1">${l}</label><input type="${type}" id="${id}" class="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-gold" placeholder="${ph}" value="${v}"></div>`;
         const createTextarea = (id, l, ph="", r=4) => `<div><label class="block text-sm font-medium text-gray-700 mb-1">${l}</label><textarea id="${id}" rows="${r}" class="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-gold" placeholder="${ph}"></textarea></div>`;
 
         function bindSmartEvents(mode) {
             const form = document.getElementById('dynamic-form');
-            form.addEventListener('input', () => { generateCopy(); saveToLocal(); });
-            form.addEventListener('change', () => { generateCopy(); saveToLocal(); });
-
-            const gs = document.getElementById('game_select');
-            if(gs) {
-                gs.addEventListener('change', (e) => {
-                    const game = PLAYOFF_SCHEDULE.find(g => g.id === e.target.value);
-                    if(game) {
-                        if(mode === 'today_preview') {
-                            updateVal('m_date', `${game.date} (${getDayChi(game.date)})`);
-                            updateVal('m_time', game.time);
-                        }
-                        generateCopy();
-                    }
-                });
+            if (form) {
+                form.addEventListener('input', () => { generateCopy(); saveToLocal(); });
+                form.addEventListener('change', () => { generateCopy(); saveToLocal(); });
             }
         }
 
         function generateCopy() {
-            const v = getValue;
-            let out = "";
+            const v = getValue; let out = "";
             const common_tags = "#TPBL #NOTHINGBUTCHAMPIONS #TPBL季後賽";
+            const gid = v('game_select');
+            const game = PLAYOFF_SCHEDULE.find(g => g.id === gid);
+            
+            if (currentMode === 'today_preview' && game) {
+                const h = getTeam(game.home); const a = getTeam(game.away);
+                const dateHeader = `${formatPlayoffDate(game.date)}（${getDayEngBold(game.date)}）`;
+                const playoffTitle = toMathBoldSerif(`PLAY-OFF ${game.id.replace('*','')}`);
+                
+                out = `🏀 ${toMathBoldSerif('GAMEDAY')} & ${toMathBoldSerif('ROSTER')}｜${dateHeader}\n\n`;
+                out += `${playoffTitle} ✦ ${toMathBoldSerif(game.time)} ${a.emoji} ${game.away} vs ${game.home} ${h.emoji} ✦\n\n`;
+                out += `${v('m_intro')}\n\n-\n\n`;
+                out += `👉🏻 賽事地點 📍 ${h.arena}\n`;
+                out += `👉🏻 轉播平台 📺 ${game.broadcast}｜博斯運動二台｜TPBL 官方 YouTube\n`;
+                out += `👉🏻 YT轉播連結｜${v('m_yt')}\n\n${common_tags} #moltentaiwan`;
 
-            if (currentMode === 'today_preview') {
-                const gid = v('game_select');
-                const game = PLAYOFF_SCHEDULE.find(g => g.id === gid);
-                if(game) {
-                    const h = getTeam(game.home); const a = getTeam(game.away);
-                    const dateBold = toMathBoldSerif(formatPlayoffDate(game.date).toUpperCase());
-                    const dayBold = toMathBoldSerif(getDayChi(game.date).toUpperCase());
-                    const timeBold = toMathBoldSerif(game.time);
-                    const gameIdBold = toMathBoldSerif(`PLAY-OFF ${game.id}`);
+            } else if (currentMode === 'final_score' && game) {
+                const gameIdBold = toMathBoldSerif(`PLAY-OFF ${game.id.replace('*','')}`);
+                const gameIdx = PLAYOFF_SCHEDULE.indexOf(game);
+                const next = PLAYOFF_SCHEDULE[gameIdx + 1];
+                
+                out = `🔚 ${gameIdBold} ${toMathBoldSerif('FINAL')}｜${v('m_title')}\n\n${v('m_content')}\n\n-\n\n`;
+                if(next) {
+                    const nH = getTeam(next.home); const nA = getTeam(next.away);
+                    out += `📺 ${toMathBoldSans('NEXT GAME')}\n${formatPlayoffDate(next.date)}｜ ${toMathBoldSerif('PLAY-OFF ' + next.id.replace('*',''))}｜${toMathBoldSerif(next.time)} ${nA.full}（客） vs. ${nH.full}（主）\n\n`;
+                }
+                out += common_tags;
 
-                    out = `🏀 ${toMathBoldSerif('GAMEDAY')} & ${toMathBoldSerif('ROSTER')}｜${dateBold}（${dayBold}）\n\n`;
-                    out += `${gameIdBold} ✦ ${timeBold} ${a.emoji} ${game.away} vs ${game.home} ${h.emoji} ✦\n\n`;
-                    out += `${v('m_intro')}\n\n`;
-                    out += `-\n\n👉🏻 賽事地點 📍 ${h.arena}\n👉🏻 轉播平台 📺 ${game.broadcast}｜博斯運動二台｜TPBL 官方 YouTube\n👉🏻 YT轉播連結｜${v('m_yt')}\n\n${common_tags} #moltentaiwan`;
-                }
-            } else if (currentMode === 'final_score') {
-                const gid = v('game_select');
-                const game = PLAYOFF_SCHEDULE.find(g => g.id === gid);
-                if(game) {
-                    const gameIdx = PLAYOFF_SCHEDULE.indexOf(game);
-                    const nextGame = PLAYOFF_SCHEDULE[gameIdx + 1];
-                    const gameIdBold = toMathBoldSerif(`PLAY-OFF ${game.id}`);
-                    
-                    out = `🔚 ${gameIdBold} ${toMathBoldSerif('FINAL')}｜${v('m_title')}\n\n${v('m_content')}\n\n-\n\n`;
-                    if(nextGame) {
-                        const nH = getTeam(nextGame.home); const nA = getTeam(nextGame.away);
-                        out += `📺 ${toMathBoldSans('NEXT GAME')}\n`;
-                        out += `${toMathBoldSerif(formatPlayoffDate(nextGame.date).toUpperCase())} ${toMathBoldSerif(String(parseDateLocal(nextGame.date).getDate()))}｜ ${toMathBoldSerif('PLAY-OFF ' + nextGame.id)}｜${toMathBoldSerif(nextGame.time)} ${nA.full}（客） vs. ${nH.full}（主）\n\n`;
-                    }
-                    out += `${common_tags}`;
-                }
             } else if (currentMode === 'game_highlight') {
                 out = `❤️‍🔥👉🏻｜${v('hl_title')}\n\n📺 ${v('hl_broadcast')}｜TPBL 官方 YOUTUBE\n\n-\n\n${v('hl_ad')}\n\n${common_tags}`;
-            } else if (currentMode === 'potg') {
-                const gid = v('game_select');
-                const game = PLAYOFF_SCHEDULE.find(g => g.id === gid);
-                if(game) {
-                    const gameIdx = PLAYOFF_SCHEDULE.indexOf(game);
-                    const nextGame = PLAYOFF_SCHEDULE[gameIdx + 1];
-                    const h = getTeam(game.home); const a = getTeam(game.away);
-                    
-                    out = `❤️‍🔥 ${toMathBoldSerif('NOTHING BUT HIM')}\n\n${a.emoji} / ${h.emoji} #${toMathBoldSerif('單場最佳球員')}\n\n`;
-                    if(nextGame) {
-                        const nH = getTeam(nextGame.home); const nA = getTeam(nextGame.away);
-                        out += `📺 ${toMathBoldSans('NEXT GAME')}\n`;
-                        out += `${toMathBoldSerif(formatPlayoffDate(nextGame.date).toUpperCase())} ${toMathBoldSerif(String(parseDateLocal(nextGame.date).getDate()))}｜ ${toMathBoldSerif('PLAY-OFF ' + nextGame.id)}｜${toMathBoldSerif(nextGame.time)} ${nA.full}（客） vs. ${nH.full}（主）\n\n`;
-                    }
-                    out += `-\n\n${v('potg_promo')}\n\n${common_tags}`;
+
+            } else if (currentMode === 'potg' && game) {
+                const h = getTeam(game.home); const a = getTeam(game.away);
+                const gameIdx = PLAYOFF_SCHEDULE.indexOf(game);
+                const next = PLAYOFF_SCHEDULE[gameIdx + 1];
+                
+                out = `❤️‍🔥 ${toMathBoldSerif('NOTHING BUT HIM')}\n\n${a.emoji} / ${h.emoji} #${toMathBoldSerif('單場最佳球員')}\n\n`;
+                if(next) {
+                    const nH = getTeam(next.home); const nA = getTeam(next.away);
+                    out += `📺 ${toMathBoldSans('NEXT GAME')}\n${formatPlayoffDate(next.date)}｜ ${toMathBoldSerif('PLAY-OFF ' + next.id.replace('*',''))}｜${toMathBoldSerif(next.time)} ${nA.full}（客） vs. ${nH.full}（主）\n\n`;
                 }
+                out += `-\n\n${v('potg_promo')}\n\n${common_tags}`;
             }
             document.getElementById('output-text').value = out;
         }
 
-        // --- Base Functions ---
-        function attachFormListeners() {}
         function saveToLocal() { if (!currentMode) return; const d = {}; document.querySelectorAll('#dynamic-form input, #dynamic-form select, #dynamic-form textarea').forEach(el => { d[el.id] = el.value; }); localStorage.setItem(STORAGE_PREFIX + currentMode, JSON.stringify(d)); localStorage.setItem('tpbl_playoff_last_mode', currentMode); }
         function loadFromLocal() { const raw = localStorage.getItem(STORAGE_PREFIX + currentMode); if(raw) { const d = JSON.parse(raw); Object.keys(d).forEach(id => { const el = document.getElementById(id); if(el) el.value = d[id]; }); } }
         function clearCacheAndReset() { localStorage.removeItem(STORAGE_PREFIX + currentMode); switchMode(currentMode); }
         function copyToClipboard() { const el = document.getElementById("output-text"); el.select(); document.execCommand("copy"); const btn = document.getElementById("copy-text"); btn.innerText = "已複製！"; setTimeout(() => btn.innerText = "一鍵複製", 2000); }
-        
-        window.onload = () => { fetchRosterData(); const last = localStorage.getItem('tpbl_playoff_last_mode') || 'today_preview'; switchMode(last); };
+        window.onload = () => { const last = localStorage.getItem('tpbl_playoff_last_mode') || 'today_preview'; switchMode(last); };
     </script>
 </body>
 </html>
