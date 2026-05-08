@@ -76,7 +76,7 @@
             </div>
             <div class="w-full md:w-1/3 bg-gray-100 p-6 flex flex-col border-t md:border-l border-gray-200">
                 <h3 class="text-lg font-bold mb-4 text-gray-700">預覽結果</h3>
-                <textarea id="output-text" class="flex-1 w-full p-4 border border-gray-300 rounded-lg text-sm resize-none focus:ring-2 focus:ring-brand-gold bg-white leading-relaxed h-80 md:h-auto" placeholder="文案將顯示於此..."></textarea>
+                <textarea id="output-text" class="flex-1 w-full p-4 border border-gray-300 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 focus:ring-brand-gold bg-white leading-relaxed h-80 md:h-auto" placeholder="文案將顯示於此..."></textarea>
                 <button onclick="copyToClipboard()" class="mt-4 w-full bg-white border-2 border-gray-200 hover:border-brand-dark text-gray-800 font-bold py-3 px-4 rounded-lg transition"><span id="copy-text">一鍵複製</span></button>
             </div>
         </main>
@@ -106,21 +106,21 @@
             { id: "AG5*", date: "2026-05-19", time: "19:00", home: "雲豹", away: "國王", broadcast: "緯來電視網" }
         ];
 
-        const STORAGE_PREFIX = 'tpbl_playoff_v3_';
+        const STORAGE_PREFIX = 'tpbl_playoff_v4_';
         let currentMode = '';
 
+        // --- 字體轉換修正 (徹底修復 I, M, k) ---
         const toMathBoldSerif = (text) => {
-            const map = { '0':'𝟎','1':'𝟏','2':'𝟐','3':'𝟑','4':'𝟒','5':'𝟓','6':'𝟔','7':'𝟕','8':'𝟖','9':'𝟗','A':'𝐀','B':'𝐁','C':'Ｃ','D':'𝐃','E':'𝐄','F':'𝐅','G':'𝐆','H':'Ｈ','I':'Ｉ','J':'Ｊ','K':'Ｋ','L':'Ｌ','M':'Ｍ','N':'Ｎ','O':'Ｏ','P':'Ｐ','Q':'Ｑ','R':'Ｒ','S':'Ｓ','T':'Ｔ','U':'Ｕ','V':'Ｖ','W':'Ｗ','X':'Ｘ','Y':'Ｙ','Z':'Ｚ','a':'ａ','b':'ｂ','c':'ｃ','d':'ｄ','e':'ｅ','f':'ｆ','g':'ｇ','h':'ｈ','i':'ｉ','j':'ｊ','k':'ｋ','l':'ｌ','m':'ｍ','n':'ｎ','o':'ｏ','p':'ｐ','q':'ｑ','r':'ｒ','s':'ｓ','t':'ｔ','u':'ｕ','v':'ｖ','w':'ｗ','x':'ｘ','y':'ｙ','z':'ｚ','-':'－','+':'＋','✦':'✦' };
-            // 手動修復特定字母轉換為全形問題，改用標準數學粗體 Unicode
-            const fixMap = {
-                'A':'𝐀','B':'𝐁','C':'𝐂','D':'𝐃','E':'𝐄','F':'𝐅','G':'𝐆','H':'𝐇','I':'Ｉ','J':'𝐉','K':'𝐊','L':'𝐋','M':'Ｍ','N':'𝐍','O':'𝐎','P':'𝐏','Q':'𝐐','R':'𝐑','S':'𝐒','T':'𝐓','U':'𝐔','V':'Ｖ','W':'𝐖','X':'𝐗','Y':'𝐘','Z':'𝐙',
-                'a':'𝐚','b':'𝐛','c':'ｃ','d':'𝐝','e':'𝐞','f':'ｆ','g':'ｇ','h':'ｈ','i':'ｉ','j':'ｊ','k':'𝐤','l':'ｌ','m':'ｍ','n':'ｎ','o':'ｏ','p':'ｐ','q':'ｑ','r':'ｒ','s':'ｓ','t':'ｔ','u':'ｕ','v':'ｖ','w':'ｗ','x':'ｘ','y':'ｙ','z':'ｚ'
+            const fullMap = {
+                'A':'𝐀','B':'𝐁','C':'𝐂','D':'𝐃','E':'𝐄','F':'𝐅','G':'𝐆','H':'𝐇','I':'𝐈','J':'𝐉','K':'𝐊','L':'𝐋','M':'𝐌','N':'𝐍','O':'𝐎','P':'𝐏','Q':'𝐐','R':'𝐑','S':'𝐒','T':'𝐓','U':'𝐔','V':'𝐕','W':'𝐖','X':'𝐗','Y':'𝐘','Z':'𝐙',
+                'a':'𝐚','b':'𝐛','c':'𝐜','d':'𝐝','e':'𝐞','f':'ｆ','g':'𝐠','h':'𝐡','i':'𝐢','j':'𝐣','k':'𝐤','l':'ｌ','m':'𝐦','n':'ｎ','o':'𝐨','p':'𝐩','q':'𝐪','r':'ｒ','s':'ｓ','t':'ｔ','u':'ｕ','v':'ｖ','w':'ｗ','x':'ｘ','y':'ｙ','z':'𝐳',
+                '0':'𝟎','1':'𝟏','2':'𝟐','3':'𝟑','4':'𝟒','5':'𝟓','6':'𝟔','7':'𝟕','8':'𝟖','9':'𝟗'
             };
-            return String(text).split('').map(char => fixMap[char] || map[char] || char).join('');
+            return String(text).split('').map(char => fullMap[char] || char).join('');
         };
         const toMathBoldSans = (text) => {
-            const map = { 'N':'𝗡','E':'𝗘','X':'𝗫','T':'𝗧','G':'𝗚','A':'𝗔','M':'𝗠' };
-            return String(text).split('').map(char => map[char] || char).join('');
+            const sansMap = { 'N':'𝗡','E':'𝗘','X':'𝗫','T':'𝗧','G':'𝗚','A':'𝗔','M':'𝗠' };
+            return String(text).split('').map(char => sansMap[char] || char).join('');
         };
         
         const parseDateLocal = (s) => { if(!s) return new Date(); const p = s.split('-'); return new Date(p[0], p[1]-1, p[2]); };
@@ -160,10 +160,11 @@
             } else if (mode === 'final_score') {
                 html += createInput('m_title','標題','text','全隊「豹」勝！雲豹搶下系列賽首勝') + createTextarea('m_content','比賽內容描述');
             } else if (mode === 'game_highlight') {
-                html = createInput('hl_title','精華標題') + `
+                container.innerHTML = createInput('hl_title','精華標題') + `
                     <div class="mt-4"><label class="block text-sm font-medium text-gray-700 mb-1">電視轉播</label><input type="text" id="hl_broadcast" class="w-full p-2.5 border border-gray-300 rounded-md" value="緯來電視網｜博斯運動二台"></div>
                     <div class="mt-4"><label class="block text-sm font-medium text-gray-700 mb-1">廣告區塊</label><textarea id="hl_ad" rows="3" class="w-full p-2.5 border border-gray-300 rounded-md">《超時空街球對決》手遊雙平台預約👉 https://app.adjust.com/1ys512ez</textarea></div>
                 `;
+                return;
             } else if (mode === 'potg') {
                 html += `<div class="mt-4"><label class="block text-sm font-medium text-gray-700 mb-1">贊助商活動文案</label><input type="text" id="potg_promo" class="w-full p-2.5 border border-gray-300 rounded-md" value="🀄️ 拚競技，超帶勁，加入競技麻將2 👉🏻 抽 TPBL 賽事門票"></div>`;
             }
@@ -190,7 +191,8 @@
             if (currentMode === 'today_preview' && game) {
                 const h = getTeam(game.home); const a = getTeam(game.away);
                 const dateHeader = `${formatPlayoffDate(game.date)}（${getDayEngBold(game.date)}）`;
-                const playoffTitle = toMathBoldSerif(`PLAY-OFF ${game.id.replace('*','')}`);
+                // 格式修正為 PLAYOFFS
+                const playoffTitle = toMathBoldSerif(`PLAYOFFS ${game.id.replace('*','')}`);
                 
                 out = `🏀 ${toMathBoldSerif('GAMEDAY')} & ${toMathBoldSerif('ROSTER')}｜${dateHeader}\n\n`;
                 out += `${playoffTitle} ✦ ${toMathBoldSerif(game.time)} ${a.emoji} ${game.away} vs ${game.home} ${h.emoji} ✦\n\n`;
@@ -200,14 +202,15 @@
                 out += `👉🏻 YT轉播連結｜${v('m_yt')}\n\n${common_tags} #moltentaiwan`;
 
             } else if (currentMode === 'final_score' && game) {
-                const gameIdBold = toMathBoldSerif(`PLAY-OFF ${game.id.replace('*','')}`);
+                // 標題修正為 PLAYOFFS [ID] FINAL
+                const gameIdBold = toMathBoldSerif(`PLAYOFFS ${game.id.replace('*','')} FINAL`);
                 const gameIdx = PLAYOFF_SCHEDULE.indexOf(game);
                 const next = PLAYOFF_SCHEDULE[gameIdx + 1];
                 
-                out = `🔚 ${gameIdBold} ${toMathBoldSerif('FINAL')}｜${v('m_title')}\n\n${v('m_content')}\n\n-\n\n`;
+                out = `🔚 ${gameIdBold}｜${v('m_title')}\n\n${v('m_content')}\n\n-\n\n`;
                 if(next) {
                     const nH = getTeam(next.home); const nA = getTeam(next.away);
-                    out += `📺 ${toMathBoldSans('NEXT GAME')}\n${formatPlayoffDate(next.date)}｜ ${toMathBoldSerif('PLAY-OFF ' + next.id.replace('*',''))}｜${toMathBoldSerif(next.time)} ${nA.full}（客） vs. ${nH.full}（主）\n\n`;
+                    out += `📺 ${toMathBoldSans('NEXT GAME')}\n${formatPlayoffDate(next.date)}｜ ${toMathBoldSerif('PLAYOFFS ' + next.id.replace('*',''))}｜${toMathBoldSerif(next.time)} ${nA.full}（客） vs. ${nH.full}（主）\n\n`;
                 }
                 out += common_tags;
 
@@ -222,7 +225,7 @@
                 out = `❤️‍🔥 ${toMathBoldSerif('NOTHING BUT HIM')}\n\n${a.emoji} / ${h.emoji} #${toMathBoldSerif('單場最佳球員')}\n\n`;
                 if(next) {
                     const nH = getTeam(next.home); const nA = getTeam(next.away);
-                    out += `📺 ${toMathBoldSans('NEXT GAME')}\n${formatPlayoffDate(next.date)}｜ ${toMathBoldSerif('PLAY-OFF ' + next.id.replace('*',''))}｜${toMathBoldSerif(next.time)} ${nA.full}（客） vs. ${nH.full}（主）\n\n`;
+                    out += `📺 ${toMathBoldSans('NEXT GAME')}\n${formatPlayoffDate(next.date)}｜ ${toMathBoldSerif('PLAYOFFS ' + next.id.replace('*',''))}｜${toMathBoldSerif(next.time)} ${nA.full}（客） vs. ${nH.full}（主）\n\n`;
                 }
                 out += `-\n\n${v('potg_promo')}\n\n${common_tags}`;
             }
