@@ -55,7 +55,7 @@
                 <img src="https://raw.githubusercontent.com/alvinliu2001/tpbl-tool/refs/heads/main/tpbl-logo-white.png" alt="TPBL Logo" class="h-6 md:h-7 w-auto cursor-pointer" onclick="location.reload()">
             </div>
             <nav id="sidebar-nav" class="flex flex-col py-4 space-y-1 bg-brand-dark flex-1">
-                <div class="px-4 py-2 text-xs font-bold text-gray-600 uppercase tracking-wider">TPBL 25-26 SEASON</div>
+                <div class="px-4 py-2 text-xs font-bold text-gray-600 uppercase tracking-wider">季後賽模式</div>
                 <button onclick="switchMode('today_preview')" id="btn-today_preview" class="sidebar-item w-full text-left px-6 py-3 hover:bg-gray-800 transition flex items-center gap-3"><i class="fa-solid fa-calendar-day w-6 text-center"></i> 今日賽事預告</button>
                 <button onclick="switchMode('final_score')" id="btn-final_score" class="sidebar-item w-full text-left px-6 py-3 hover:bg-gray-800 transition flex items-center gap-3"><i class="fa-solid fa-flag-checkered w-6 text-center"></i> 終場比分</button>
                 <button onclick="switchMode('game_highlight')" id="btn-game_highlight" class="sidebar-item w-full text-left px-6 py-3 hover:bg-gray-800 transition flex items-center gap-3"><i class="fa-solid fa-film w-6 text-center"></i> 本場賽事精華</button>
@@ -95,25 +95,25 @@
         };
 
         const PLAYOFF_SCHEDULE = [
-            { id: "BG1", date: "2026-05-09", time: "17:00", home: "夢想家", away: "攻城獅", broadcast: "MOMOTV" },
-            { id: "AG1", date: "2026-05-10", time: "17:00", home: "雲豹", away: "國王", broadcast: "MOMOTV" },
-            { id: "BG2", date: "2026-05-12", time: "19:00", home: "夢想家", away: "攻城獅", broadcast: "緯來電視網" },
-            { id: "AG2", date: "2026-05-13", time: "19:00", home: "雲豹", away: "國王", broadcast: "緯來電視網" },
-            { id: "BG3", date: "2026-05-14", time: "19:00", home: "攻城獅", away: "夢想家", broadcast: "緯來電視網" },
-            { id: "AG3", date: "2026-05-15", time: "19:00", home: "國王", away: "雲豹", broadcast: "MOMOTV" },
-            { id: "BG4*", date: "2026-05-16", time: "17:00", home: "攻城獅", away: "夢想家", broadcast: "MOMOTV" },
-            { id: "AG4*", date: "2026-05-17", time: "17:00", home: "國王", away: "雲豹", broadcast: "MOMOTV" },
-            { id: "BG5*", date: "2026-05-18", time: "19:00", home: "夢想家", away: "攻城獅", broadcast: "緯來電視網" },
-            { id: "AG5*", date: "2026-05-19", time: "19:00", home: "雲豹", away: "國王", broadcast: "緯來電視網" }
+            { id: "BG1", date: "2026-05-09", time: "17:00", home: "夢想家", away: "攻城獅", broadcast: "MOMOTV", arena: "臺中洲際迷你蛋" },
+            { id: "AG1", date: "2026-05-10", time: "17:00", home: "雲豹", away: "國王", broadcast: "MOMOTV", arena: "桃園巨蛋" },
+            { id: "BG2", date: "2026-05-12", time: "19:00", home: "夢想家", away: "攻城獅", broadcast: "緯來電視網", arena: "臺中洲際迷你蛋" },
+            { id: "AG2", date: "2026-05-13", time: "19:00", home: "雲豹", away: "國王", broadcast: "緯來電視網", arena: "桃園巨蛋" },
+            { id: "BG3", date: "2026-05-14", time: "19:00", home: "攻城獅", away: "夢想家", broadcast: "緯來電視網", arena: "新竹縣體育館" },
+            { id: "AG3", date: "2026-05-15", time: "19:00", home: "國王", away: "雲豹", broadcast: "MOMOTV", arena: "和平籃球館" },
+            { id: "BG4*", date: "2026-05-16", time: "17:00", home: "攻城獅", away: "夢想家", broadcast: "MOMOTV", arena: "新竹縣體育館" },
+            { id: "AG4*", date: "2026-05-17", time: "17:00", home: "國王", away: "雲豹", broadcast: "MOMOTV", arena: "和平籃球館" },
+            { id: "BG5*", date: "2026-05-18", time: "19:00", home: "夢想家", away: "攻城獅", broadcast: "緯來電視網", arena: "臺中洲際迷你蛋" },
+            { id: "AG5*", date: "2026-05-19", time: "19:00", home: "雲豹", away: "國王", broadcast: "緯來電視網", arena: "桃園巨蛋" }
         ];
 
-        const STORAGE_PREFIX = 'tpbl_playoff_v7_';
+        const STORAGE_PREFIX = 'tpbl_playoff_v8_';
         let currentMode = '';
 
         const toMathBoldSerif = (text) => {
             const map = {
                 'A':'𝐀','B':'𝐁','C':'𝐂','D':'𝐃','E':'𝐄','F':'𝐅','G':'𝐆','H':'𝐇','I':'𝐈','J':'𝐉','K':'𝐊','L':'𝐋','M':'𝐌','N':'𝐍','O':'𝐎','P':'𝐏','Q':'𝐐','R':'𝐑','S':'𝐒','T':'𝐓','U':'𝐔','V':'𝐕','W':'𝐖','X':'𝐗','Y':'𝐘','Z':'𝐙',
-                'a':'𝐚','b':'𝐛','c':'𝐜','d':'𝐝','e':'𝐞','f':'ｆ','g':'𝐠','h':'𝐡','i':'ｉ','j':'ｊ','k':'𝐤','l':'ｌ','m':'ｍ','n':'ｎ','o':'ｏ','p':'ｐ','q':'ｑ','r':'ｒ','s':'ｓ','t':'ｔ','u':'ｕ','v':'ｖ','w':'ｗ','x':'ｘ','y':'ｙ','z':'𝐳',
+                'a':'𝐚','b':'𝐛','c':'𝐜','d':'𝐝','e':'𝐞','f':'ｆ','g':'𝐠','h':'ｈ','i':'ｉ','j':'ｊ','k':'𝐤','l':'ｌ','m':'ｍ','n':'ｎ','o':'ｏ','p':'ｐ','q':'𝐪','r':'ｒ','s':'ｓ','t':'ｔ','u':'ｕ','v':'ｖ','w':'ｗ','x':'ｘ','y':'ｙ','z':'𝐳',
                 '0':'𝟎','1':'𝟏','2':'𝟐','3':'𝟑','4':'𝟒','5':'𝟓','6':'𝟔','7':'𝟕','8':'𝟖','9':'𝟗'
             };
             return String(text).split('').map(char => map[char] || char).join('');
@@ -133,6 +133,10 @@
             const m = ["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"][d.getMonth()];
             return toMathBoldSerif(`${m}.${String(d.getDate()).padStart(2,'0')}`);
         };
+        const formatBracketDate = (s) => {
+            const d = parseDateLocal(s);
+            return `${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+        }
         const getValue = (id) => document.getElementById(id)?.value || "";
         const getTeam = (k) => TEAMS[k] || { full: k, emoji: "", arena: "" };
 
@@ -151,7 +155,6 @@
         function renderForm(mode) {
             const container = document.getElementById('dynamic-form');
             let html = '';
-            
             const gameSelect = `<div><label class="block text-sm font-medium text-gray-700 mb-1">選擇季後賽場次</label><select id="game_select" class="w-full p-2.5 border border-gray-300 rounded-md bg-white"><option value="" disabled selected>請選擇場次</option>${PLAYOFF_SCHEDULE.map(g => `<option value="${g.id}">${g.id.replace('*','')}｜${g.date} ${g.away} vs ${g.home}</option>`).join('')}</select></div>`;
             const broadcastSelect = (id, label) => `<div><label class="block text-sm font-medium text-gray-700 mb-1">${label}</label><select id="${id}" class="w-full p-2.5 border border-gray-300 rounded-md bg-white"><option value="緯來電視網">緯來電視網</option><option value="MOMOTV">MOMOTV</option></select></div>`;
 
@@ -206,7 +209,7 @@
                 const h = getTeam(game.home); const a = getTeam(game.away);
                 const dateHeader = `${formatPlayoffDate(game.date)}（${getDayEngBold(game.date)}）`;
                 const playoffTitle = toMathBoldSerif(`PLAYOFFS ${game.id.replace('*','')}`);
-                out = `🏀 ${toMathBoldSerif('GAMEDAY')} & ${toMathBoldSerif('ROSTER')}｜${dateHeader}\n\n${playoffTitle} ✦ ${toMathBoldSerif(game.time)} ${a.emoji} ${game.away} vs ${game.home} ${h.emoji} ✦\n\n${v('m_intro')}\n\n-\n\n👉🏻 賽事地點 📍 ${h.arena}\n👉🏻 轉播平台 📺 ${v('m_broadcast')}${fixed_broadcast}\n👉🏻 YT轉播連結｜${v('m_yt')}\n\n${common_tags} #moltentaiwan`;
+                out = `🏀 ${toMathBoldSerif('GAMEDAY')} & ${toMathBoldSerif('ROSTER')}｜${dateHeader}\n\n${playoffTitle} ✦ ${toMathBoldSerif(game.time)} ${a.emoji} ${game.away} vs ${game.home} ${h.emoji} ✦\n\n${v('m_intro')}\n\n-\n\n👉🏻 賽事地點 📍 ${game.arena}\n👉🏻 轉播平台 📺 ${v('m_broadcast')}${fixed_broadcast}\n👉🏻 YT轉播連結｜${v('m_yt')}\n\n${common_tags} #moltentaiwan`;
             } else if (currentMode === 'final_score' && game) {
                 const gameIdBold = toMathBoldSerif(`PLAYOFFS ${game.id.replace('*','')} FINAL`);
                 const gameIdx = PLAYOFF_SCHEDULE.indexOf(game);
@@ -214,7 +217,7 @@
                 out = `🔚 ${gameIdBold}｜${v('m_title')}\n\n${v('m_content')}\n\n-\n\n`;
                 if(next) {
                     const nH = getTeam(next.home); const nA = getTeam(next.away);
-                    out += `📺 ${toMathBoldSans('NEXT GAME')}\n${formatPlayoffDate(next.date)}｜ ${toMathBoldSerif('PLAYOFFS ' + next.id.replace('*',''))}｜${toMathBoldSerif(next.time)} ${nA.full}（客） vs. ${nH.full}（主）\n\n`;
+                    out += `📺 ${toMathBoldSans('NEXT GAME')}\n${formatPlayoffDate(next.date)}｜ ${toMathBoldSerif('PLAYOFFS ' + next.id.replace('*',''))}｜${toMathBoldSerif(next.time)} ${nA.full}（客） vs. ${nH.full}（主）｜${next.arena}\n\n`;
                 }
                 out += common_tags;
             } else if (currentMode === 'game_highlight') {
@@ -226,12 +229,12 @@
                 out = `❤️‍🔥 ${toMathBoldSerif('NOTHING BUT HIM')}\n\n${a.emoji} / ${h.emoji} #${toMathBoldSerif('單場最佳球員')}\n\n`;
                 if(next) {
                     const nH = getTeam(next.home); const nA = getTeam(next.away);
-                    out += `📺 ${toMathBoldSans('NEXT GAME')}\n${formatPlayoffDate(next.date)}｜ ${toMathBoldSerif('PLAYOFFS ' + next.id.replace('*',''))}｜${toMathBoldSerif(next.time)} ${nA.full}（客） vs. ${nH.full}（主）\n\n`;
+                    out += `📺 ${toMathBoldSans('NEXT GAME')}\n${formatPlayoffDate(next.date)}｜ ${toMathBoldSerif('PLAYOFFS ' + next.id.replace('*',''))}｜${toMathBoldSerif(next.time)} ${nA.full}（客） vs. ${nH.full}（主）｜${next.arena}\n\n`;
                 }
                 out += `-\n\n${v('potg_promo')}\n\n${common_tags}`;
             } else if (currentMode === 'bracket_update' && game) {
-                const gameIdBold = toMathBoldSerif(game.id.replace('*',''));
-                out = `🏆 ${toMathBoldSerif('PLAYOFF BRACKETS')}｜季後賽晉級樹狀圖\n\n季後賽戰況截至 ${gameIdBold} 賽事結束\n\n${common_tags}`;
+                const dateVar = formatBracketDate(game.date);
+                out = `🏆 ${toMathBoldSerif('PLAYOFF BRACKETS')}\n\n季後賽戰況截至 ${dateVar} 賽事結束\n\n${common_tags}`;
             }
             document.getElementById('output-text').value = out;
         }
