@@ -234,7 +234,7 @@
                 out += `-\n\n${v('potg_promo')}\n\n${common_tags}`;
             } else if (currentMode === 'bracket_update' && game) {
                 const dateVar = formatBracketDate(game.date);
-                out = `🏆 ${toMathBoldSerif('PLAYOFF BRACKETS')}\n\n季後賽戰況截至 ${dateVar} 賽事結束\n\n${common_tags}`;
+                out = `🏆 ${toMathBoldSerif('PLAYOFFS BRACKET')}\n\n季後賽戰況截至 ${dateVar} 賽事結束\n\n${common_tags}`;
             }
             document.getElementById('output-text').value = out;
         }
